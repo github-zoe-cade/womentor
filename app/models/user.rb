@@ -11,11 +11,11 @@ class User < ActiveRecord::Base
 
   has_one :profile, dependent: :destroy
   # Consider overriding Devise::RegistrationsController & call Profile.create from their
-  after_create :create_profile
+  after_create :create_user_records
 
   private
 
-  def create_profile
-    Profile.create(user_id: id)
+  def create_user_records
+    Profile.create_records(user)
   end
 end
