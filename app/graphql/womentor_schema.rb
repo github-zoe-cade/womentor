@@ -4,7 +4,7 @@ class WomentorSchema < GraphQL::Schema
     mutation:         Types::MutationType,
     resource_loaders: [
       GraphqlDevise::ResourceLoader.new(User)
-    ]
+    ],
   )
   mutation(Types::MutationType)
   query(Types::QueryType)
