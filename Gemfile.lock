@@ -88,6 +88,10 @@ GEM
       railties
       sprockets-rails
     graphql (1.12.16)
+    graphql_devise (0.17.1)
+      devise_token_auth (>= 0.1.43, < 2.0)
+      graphql (>= 1.8, < 1.13.0)
+      rails (>= 4.2, < 6.2)
     i18n (1.8.10)
       concurrent-ruby (~> 1.0)
     listen (3.7.0)
@@ -192,6 +196,7 @@ DEPENDENCIES
   enumerize
   graphiql-rails
   graphql
+  graphql_devise
   listen (~> 3.3)
   pg (~> 1.1)
   puma (~> 5.0)

@@ -7,7 +7,7 @@ class User < ActiveRecord::Base
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
-  include DeviseTokenAuth::Concerns::User
+  include GraphqlDevise::Concerns::Model
 
   has_one :profile, dependent: :destroy
   # Consider overriding Devise::RegistrationsController & call Profile.create from their
