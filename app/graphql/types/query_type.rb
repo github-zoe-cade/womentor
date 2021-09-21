@@ -9,11 +9,11 @@ module Types
       description: "Current user profile"
 
     def profile
-      User.last.profile
+      current_user.profile
     end
 
     def user
-      User.last
+      current_user
     end
   end
 end
