@@ -3,7 +3,9 @@ class WomentorSchema < GraphQL::Schema
     query:            Types::QueryType,
     mutation:         Types::MutationType,
     resource_loaders: [
-      GraphqlDevise::ResourceLoader.new(User)
+      GraphqlDevise::ResourceLoader.new(User,
+        # Deprecated routes, remove once the gem is upgraded
+        skip: [:sign_up, :update_password, :send_password_reset, :resend_confirmation, :confirm_account, :check_password_token])
     ],
   )
   mutation(Types::MutationType)

@@ -6,7 +6,7 @@ class CreateExpectation < ActiveRecord::Migration[6.1]
       t.text :availability
       t.text :expertise
       t.text :technologies, default: [], array: true
-      t.text :secteur
+      t.text :industry
       t.text :job_type
 
       t.timestamps

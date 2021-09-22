@@ -9,6 +9,9 @@ class Profile < ActiveRecord::Base
   has_one :expectation, dependent: :destroy
   has_one :mentorship_capacity, dependent: :destroy
 
+  # only for seed
+  accepts_nested_attributes_for :mentorship_capacity, :expectation
+
   def self.create_records(user)
     profile = new(user: user)
     profile.expectation = Expectation.new(profile: profile)
