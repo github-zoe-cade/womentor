@@ -4,84 +4,85 @@
 # Examples:
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
+#   Character.create(name: 'Luke', movie: movies.first)`
+
+require 'faker'
 
 zozo = User.create!({
   email: "zozo@gmail.com",
   password: "zozozo"
 })
 
-zozo.profile.update!({
+zozo.profile.assign_attributes({
   is_mentee: true,
   name: "Zoé",
   seniority: 4,
   expertise: :fullstack,
-  technologies: ['ruby', 'ror', 'reactjs', 'typescript'],
+  technologies: %i(ruby ror reactjs typescript),
   job_type: :freelance,
   expectation_attributes: {
-    mentoring_skills: [:soft_skills],
-    technologies: ['ror'],
+    mentoring_skills: [:soft_skills, :career_evolution],
+    technologies: [:ror],
     availability: :monthly,
     job_type: :freelance
   }
 })
 
-huey = User.create!({email: "huey@gmail.com", password: "hueyhuey"})
-huey.profile.update!({
-  is_mentee: true,
-  name: "Huey",
-  seniority: 4,
-  expertise: :frontend,
-  technologies: ['reactjs', 'typescript'],
-  job_type: :freelance,
-  mentorship_capacity_attributes: {
-    mentoring_skills: [:soft_skills],
-    availability: :monthly,
-    mentee_capacity: 3
-  }
-})
+ProfileRepository.save!(zozo.profile)
 
-dewey = User.create!({email: "dewey@gmail.com", password: "deweydewey"})
-dewey.profile.update!({
-  is_mentee: true,
-  name: "Dewey",
-  seniority: 10,
-  expertise: :fullstack,
-  technologies: ['reactjs', 'typescript'],
-  job_type: :freelance,
-  mentorship_capacity_attributes: {
-    mentoring_skills: [:soft_skills],
-    availability: :weekly,
-    mentee_capacity: 1
-  }
-})
+def maybe_pick_one(values)
+  ([true, false].sample && values.sample).presence
+end
 
-louie = User.create!({email: "louie@gmail.com", password: "louielouie"})
-louie.profile.update!({
-  is_mentee: true,
-  name: "Louie",
-  seniority: 6,
-  expertise: :backend,
-  technologies: ['reactjs', 'ror'],
-  job_type: :startup,
-  mentorship_capacity_attributes: {
-    mentoring_skills: [:technical_skills],
-    availability: :weekly,
-    mentee_capacity: 3
+def maybe_pick_multiple(values, max, min = 1)
+  [true, false].sample ? values.sample(rand(min..max)) : []
+end
+
+100.times do
+  name = "#{Faker::Name.female_first_name} #{Faker::Name.last_name}"
+  email = "#{name.downcase.gsub(" ", ".")}@#{Faker::Internet.domain_name}"
+  user = User.create!(email: email, password: Faker::Internet.password)
+
+  is_mentor = [true, false].sample
+  is_mentee = [true, false].sample
+
+
+  profile_attributes = {
+    is_mentor: is_mentor,
+    is_mentee: is_mentee,
+    name: name,
+    github_url: Faker::Internet.url(host: 'github.com'),
+    linkedin_url: Faker::Internet.url(host: 'linkedin.com'),
+    seniority: rand(0..20),
+    expertise: Profile.expertise.values.sample,
+    technologies: Profile.technologies.values.sample(rand(0..10)),
+    industry: maybe_pick_one(Profile.industry.values),
+    job_type: Profile.job_type.values.sample
   }
-})
- 
-scrooge = User.create!({email: "scrooge@gmail.com", password: "scroogescrooge"})
-scrooge.profile.update!({
-  is_mentee: true,
-  name: "Scrooge",
-  seniority: 10,
-  expertise: :fullstack,
-  technologies: ['ruby', 'ror'],
-  job_type: :freelance,
-  mentorship_capacity_attributes: {
-    mentoring_skills: [:soft_skills],
-    availability: :monthly,
-    mentee_capacity: 0
-  }
-})
+
+  if is_mentor
+    profile_attributes.merge!({
+      mentorship_capacity_attributes: {
+        mentoring_skills: Expectation.mentoring_skills.values.sample(rand(1..7)),
+        availability: Profile.availability.values.sample,
+        mentee_capacity: rand(0..5)
+      }
+    })
+  end
+
+  if is_mentee
+    profile_attributes.merge!({
+      expectation_attributes: {
+        mentoring_skills: Expectation.mentoring_skills.values.sample(rand(1..5)),
+        availability: Profile.availability.values.sample,
+        expertise: Profile.expertise.values.sample,
+        technologies: maybe_pick_multiple(Profile.technologies.values, 5),
+        industry: maybe_pick_one(Profile.industry.values),
+        job_type: maybe_pick_one(Profile.job_type.values)
+      }
+    })
+  end
+
+  user.profile.assign_attributes(profile_attributes)
+  ProfileRepository.save!(user.profile)
+end

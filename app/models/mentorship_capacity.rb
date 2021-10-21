@@ -1,8 +1,8 @@
 class MentorshipCapacity < ActiveRecord::Base
   extend Enumerize
 
-  # include HasMentorshipSkills
   include HasAvailability
+  include HasMentoringSkills
 
   belongs_to :profile
 end

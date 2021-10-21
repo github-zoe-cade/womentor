@@ -10,7 +10,8 @@ class User < ActiveRecord::Base
   include GraphqlDevise::Concerns::Model
 
   has_one :profile, dependent: :destroy
-  # Consider overriding Devise::RegistrationsController & call Profile.create from their
+
+  # Consider overriding Devise::RegistrationsController & call Profile.create from there
   after_create :create_user_records
 
   private
